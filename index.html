@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone PRO</title>
+
+<style>
+body{font-family:-apple-system;background:#f2f2f7;margin:0;color:#1c1c1e}
+header{position:sticky;top:0;background:#fff;padding:14px;text-align:center;font-weight:600}
+#summaryBar{position:sticky;top:48px;background:#fff;padding:8px;font-size:13px;border-bottom:1px solid #eee;display:none}
+.progress{height:4px;background:#ddd}
+.progress-bar{height:100%;width:0;background:#007aff}
+.container{padding:15px;max-width:500px;margin:auto}
+.card{background:#fff;border-radius:18px;padding:18px}
+.step{display:none}.step.active{display:block}
+input,select{width:100%;padding:14px;border-radius:14px;border:none;background:#f2f2f7;margin-top:10px}
+.btn,.next{padding:14px;border-radius:14px;margin-top:10px;text-align:center;font-weight:600}
+.btn{background:#eee}.btn.active{background:#007aff;color:#fff}
+.next{background:#007aff;color:#fff}
+.result{background:#fff;padding:15px;margin-top:15px;border-radius:18px}
+.price{font-size:24px;text-align:center;color:#34c759;font-weight:700}
+#adminBox{display:none;position:fixed;inset:0;background:#fff;z-index:999;padding:20px}
+a.btn-link{display:block;padding:12px;border-radius:12px;text-align:center;text-decoration:none;color:#fff;margin-top:8px}
+</style>
+</head>
+
+<body>
+
+<header onclick="openAdmin()">Thu mua iPhone</header>
+
+<div id="summaryBar">
+📱 <span id="sumModel"></span> |
+💾 <span id="sumStorage"></span> |
+🎨 <span id="sumColor"></span> |
+🌍 <span id="sumMarket"></span> |
+⭐ <span id="sumScore"></span>
+</div>
+
+<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+
+<div class="container">
+<div class="card">
+
+<!-- STEP 1 -->
+<div class="step active">
+<select id="model"></select>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+<select id="storage"></select>
+
+<select id="color">
+<option>Black</option>
+<option>White</option>
+<option>Blue</option>
+<option>Purple</option>
+<option>Gold</option>
+<option>Pink</option>
+</select>
+
+<select id="market">
+<option value="VNA">VN/A</option>
+<option value="LL">LL/A</option>
+<option value="ZP">ZP/A</option>
+<option value="CH">CH/A</option>
+</select>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<label>🔋 Pin</label>
+<input type="range" id="battery" min="70" max="100" value="90">
+<div><span id="batteryValue">90</span>% - <span id="batteryText">Pin tốt</span></div>
+
+<div class="btn" onclick="pick(this,'pin','zin')">Pin zin</div>
+<div class="btn" onclick="pick(this,'pin','thay')">Pin thay</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+<div class="btn" onclick="pick(this,'body','zin')">Chưa bung</div>
+<div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+<input id="name" placeholder="Tên khách">
+<input id="phone" placeholder="SĐT">
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="calc()">Xem giá</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<!-- CONTACT -->
+<div id="contactBox" style="display:none">
+<div class="result">
+<div style="font-weight:600">Liên hệ chốt giá</div>
+<a id="zaloLink" class="btn-link" style="background:#007aff">💬 Zalo</a>
+<a id="fbLink" class="btn-link" style="background:#1877f2">📘 Facebook</a>
+<a id="mapLink" class="btn-link" style="background:#34c759">📍 Map</a>
+</div>
+</div>
+
+</div>
+
+<!-- ADMIN -->
+<div id="adminBox">
+<h3>Admin</h3>
+<input id="adminUser" placeholder="User">
+<input id="adminPass" type="password" placeholder="Pass">
+<div class="next" onclick="login()">Login</div>
+
+<div id="adminPanel" style="display:none">
+<button onclick="downloadData()">Tải CSV</button>
+<button onclick="clearData()">Xoá data</button>
+</div>
+</div>
+
+<script>
+
+// ===== CONFIG =====
+const ADMIN_INFO={
+zalo:"https://zalo.me/0900000000",
+facebook:"https://facebook.com/yourpage",
+map:"https://maps.google.com/?q=Can+Giuoc"
+};
+
+// ===== MODELS =====
+const MODELS=[
+"iphone x","iphone xr","iphone xs","iphone xs max",
+"iphone 11","iphone 11 pro","iphone 11 pro max",
+"iphone 12 mini","iphone 12","iphone 12 pro","iphone 12 pro max",
+"iphone 13 mini","iphone 13","iphone 13 pro","iphone 13 pro max",
+"iphone 14","iphone 14 plus","iphone 14 pro","iphone 14 pro max",
+"iphone 15","iphone 15 plus","iphone 15 pro","iphone 15 pro max",
+"iphone 16","iphone 16 plus","iphone 16 pro","iphone 16 pro max",
+"iphone 17","iphone 17 plus","iphone 17 pro","iphone 17 pro max"
+];
+MODELS.forEach(x=>model.innerHTML+=`<option>${x}</option>`);
+
+// STORAGE
+function getStorage(m){
+if(m.includes("pro")) return [128,256,512,1024];
+return [64,128,256];
+}
+function loadStorage(){
+storage.innerHTML="";
+getStorage(model.value).forEach(x=>storage.innerHTML+=`<option>${x}</option>`);
+}
+
+// STEP
+let step=0,steps=document.querySelectorAll(".step");
+function show(){
+steps.forEach(s=>s.classList.remove("active"));
+steps[step].classList.add("active");
+progressBar.style.width=(step/(steps.length-1)*100)+"%";
+updateSummary();
+saveState();
+}
+function next(){if(step<steps.length-1){step++;show()}}
+function prev(){if(step>0){step--;show()}}
+
+// PICK
+let selected={};
+function pick(el,k,v){
+selected[k]=v;
+el.parentElement.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+}
+
+// PIN UI
+battery.oninput=()=>{
+batteryValue.innerText=battery.value;
+batteryText.innerText = battery.value>=90?"Pin rất tốt":
+battery.value>=85?"Pin ổn":
+battery.value>=80?"Pin yếu":"Pin kém";
+}
+
+// SCORE
+function calcScore(){
+let s=10;
+if(battery.value<85)s-=1;
+if(selected.pin=="thay")s-=1;
+if(selected.body=="bung")s-=2;
+return s.toFixed(1);
+}
+
+// SUMMARY
+function updateSummary(){
+summaryBar.style.display="block";
+sumModel.innerText=model.value;
+sumStorage.innerText=storage.value;
+sumColor.innerText=color.value;
+sumMarket.innerText=market.value;
+sumScore.innerText=calcScore()+"/10";
+}
+
+// SAVE/LOAD
+function saveState(){
+localStorage.setItem("form",JSON.stringify({
+step,model:model.value,storage:storage.value,battery:battery.value,selected
+}));
+}
+function loadState(){
+let d=JSON.parse(localStorage.getItem("form")||"null");
+if(!d)return;
+model.value=d.model;
+loadStorage();
+setTimeout(()=>{
+storage.value=d.storage;
+battery.value=d.battery;
+selected=d.selected||{};
+step=d.step;
+show();
+},100);
+}
+
+// CRM
+function saveCustomer(data){
+let list=JSON.parse(localStorage.getItem("customers")||"[]");
+list.unshift({...data,time:new Date().toLocaleString()});
+localStorage.setItem("customers",JSON.stringify(list));
+}
+
+// PRICE ENGINE (ẩn)
+function calc(){
+let price=15000000;
+if(battery.value<85)price-=500000;
+if(selected.pin=="thay")price-=600000;
+if(selected.body=="bung")price-=1200000;
+
+let min=Math.round(price*0.92);
+let max=Math.round(price*1.05);
+
+saveCustomer({name:name.value,phone:phone.value,model:model.value});
+
+result.innerHTML=`<div class="result">
+<div class="price">${min.toLocaleString()} - ${max.toLocaleString()}đ</div>
+<div style="text-align:center">${calcScore()}/10</div>
+</div>`;
+
+updateContact();
+contactBox.style.display="block";
+}
+
+// CONTACT
+function updateContact(){
+let msg=`Thu máy ${model.value} ${storage.value}GB Pin ${battery.value}%`;
+zaloLink.href=ADMIN_INFO.zalo+"?text="+encodeURIComponent(msg);
+fbLink.href=ADMIN_INFO.facebook;
+mapLink.href=ADMIN_INFO.map;
+}
+
+// ADMIN
+function openAdmin(){adminBox.style.display="block"}
+function login(){
+if(adminUser.value=="admin"&&adminPass.value=="123456"){
+adminPanel.style.display="block";
+}
+}
+function downloadData(){
+let data=JSON.parse(localStorage.getItem("customers")||"[]");
+let csv="Tên,SĐT,Model,Thời gian\n";
+data.forEach(d=>csv+=`${d.name},${d.phone},${d.model},${d.time}\n`);
+let blob=new Blob([csv]);
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="data.csv";
+a.click();
+}
+function clearData(){
+localStorage.removeItem("customers");
+alert("Đã xoá");
+}
+
+// INIT
+model.onchange=loadStorage;
+loadStorage();
+loadState();
+show();
+
+</script>
+
+</body>
+</html>

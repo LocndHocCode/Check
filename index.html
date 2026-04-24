@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone PRO</title>
+
+<style>
+body{font-family:-apple-system;background:#f2f2f7;margin:0}
+header{position:sticky;top:0;background:#fff;padding:14px;text-align:center;font-weight:600}
+.container{max-width:500px;margin:auto;padding:15px}
+.card{background:#fff;border-radius:20px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+.step{display:none}.step.active{display:block}
+input,select{width:100%;padding:14px;border-radius:14px;border:none;background:#f2f2f7;margin-top:10px}
+.btn,.next{padding:14px;border-radius:14px;margin-top:10px;text-align:center;font-weight:600}
+.btn{background:#eee}.btn.active{background:#007aff;color:#fff}
+.next{background:#007aff;color:#fff}
+.price{font-size:26px;text-align:center;color:#34c759;font-weight:700;margin-top:15px}
+</style>
+</head>
+
+<body>
+
+<header>Thu mua iPhone</header>
+
+<div class="container">
+<div class="card">
+
+<!-- STEP 1 -->
+<div class="step active">
+<select id="model"></select>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+<select id="storage"></select>
+
+<select id="color">
+<option>Black</option>
+<option>White</option>
+<option>Purple</option>
+<option>Gold</option>
+<option>Blue</option>
+</select>
+
+<select id="market">
+<option value="VNA">VN/A</option>
+<option value="LL">LL/A</option>
+<option value="ZP">ZP/A</option>
+<option value="CH">CH/A</option>
+</select>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<input type="range" id="battery" min="70" max="100" value="90">
+<div><span id="batteryValue">90</span>%</div>
+
+<div class="btn" onclick="pick(this,'pin','zin')">Pin zin</div>
+<div class="btn" onclick="pick(this,'pin','thay')">Pin thay</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+<div class="btn" onclick="pick(this,'body','zin')">Chưa bung</div>
+<div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+<input id="name" placeholder="Tên khách">
+<input id="phone" placeholder="SĐT">
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="calc()">Xem giá</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+// ===== FULL MODEL =====
+const MODELS=[
+"iphone x","iphone xr","iphone xs","iphone xs max",
+"iphone 11","iphone 11 pro","iphone 11 pro max",
+"iphone 12 mini","iphone 12","iphone 12 pro","iphone 12 pro max",
+"iphone 13 mini","iphone 13","iphone 13 pro","iphone 13 pro max",
+"iphone 14","iphone 14 plus","iphone 14 pro","iphone 14 pro max",
+"iphone 15","iphone 15 plus","iphone 15 pro","iphone 15 pro max",
+"iphone 16","iphone 16 plus","iphone 16 pro","iphone 16 pro max",
+"iphone 17","iphone 17 plus","iphone 17 pro","iphone 17 pro max"
+];
+
+MODELS.forEach(x=>model.innerHTML+=`<option>${x}</option>`);
+
+// ===== STORAGE =====
+function getStorage(m){
+if(m.includes("pro")) return [128,256,512,1024];
+if(m.includes("13")||m.includes("14")||m.includes("15")||m.includes("16")||m.includes("17")) return [128,256,512];
+return [64,128,256];
+}
+
+function loadStorage(){
+storage.innerHTML="";
+getStorage(model.value).forEach(x=>storage.innerHTML+=`<option>${x}</option>`);
+}
+
+// ===== STEP =====
+let step=0,steps=document.querySelectorAll(".step");
+function show(){
+steps.forEach(s=>s.classList.remove("active"));
+steps[step].classList.add("active");
+}
+function next(){if(step<steps.length-1){step++;show()}}
+function prev(){if(step>0){step--;show()}}
+
+// ===== PICK =====
+let selected={};
+function pick(el,k,v){
+selected[k]=v;
+el.parentElement.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+}
+
+// ===== PIN =====
+battery.oninput=()=>batteryValue.innerText=battery.value;
+
+// ===== MARKET PRICE =====
+const marketPrice={
+"iphone x":5000000,"iphone xr":5500000,"iphone xs":6000000,"iphone xs max":7000000,
+"iphone 11":8000000,"iphone 11 pro":9500000,"iphone 11 pro max":10500000,
+"iphone 12":9500000,"iphone 12 pro":11500000,"iphone 12 pro max":12500000,
+"iphone 13":12000000,"iphone 13 pro":15000000,"iphone 13 pro max":16500000,
+"iphone 14":14000000,"iphone 14 pro":18000000,"iphone 14 pro max":19500000,
+"iphone 15":17000000,"iphone 15 pro":22000000,"iphone 15 pro max":24000000,
+"iphone 16":20000000,"iphone 16 pro":26000000,"iphone 16 pro max":28000000,
+"iphone 17":23000000,"iphone 17 pro":29000000,"iphone 17 pro max":31000000
+};
+
+// ===== CALC =====
+function calc(){
+
+let base = marketPrice[model.value] || 10000000;
+let price = base - 1500000;
+
+// pin
+if(battery.value<85)price-=500000;
+
+// pin thay
+if(selected.pin=="thay")price-=700000;
+
+// bung
+if(selected.body=="bung")price-=1500000;
+
+// dung lượng
+let s=parseInt(storage.value);
+if(s==256)price+=400000;
+if(s==512)price-=200000;
+
+// màu
+if(color.value=="Gold")price-=300000;
+
+// thị trường
+if(market.value=="CH")price-=500000;
+
+if(price<1500000)price=1500000;
+
+let min=Math.round(price*0.9);
+let max=Math.round(price*1.03);
+
+result.innerHTML=`<div class="price">${min.toLocaleString()} - ${max.toLocaleString()}đ</div>`;
+}
+
+// INIT
+model.onchange=loadStorage;
+loadStorage();
+show();
+
+</script>
+
+</body>
+</html>

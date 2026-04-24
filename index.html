@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua điện thoại PRO</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{background:#f5f5f7;font-family:-apple-system}
+.header{font-weight:700;text-align:center;padding:12px;background:#fff}
+.dropdown-box{max-height:260px;overflow:auto;border-radius:10px;border:1px solid #ddd}
+.item:hover{background:#f2f2f2;cursor:pointer}
+</style>
+</head>
+
+<body>
+
+<div class="header shadow-sm">📱 Thu mua iPhone</div>
+
+<div class="container mt-3">
+
+<div class="card p-3 shadow-sm">
+
+<input id="modelInput" class="form-control" placeholder="📱 Chọn model..." readonly onclick="toggleDropdown()">
+
+<div id="dropdown" class="dropdown-box mt-1" style="display:none">
+<input id="search" class="form-control" placeholder="🔍 Tìm model...">
+<div id="modelList"></div>
+</div>
+
+<select id="storage" class="form-select mt-2"></select>
+<select id="color" class="form-select mt-2"></select>
+
+<div class="mt-2">
+🔋 Pin: <b id="pinText">90%</b>
+<input type="range" id="battery" class="form-range" min="70" max="100" value="90">
+</div>
+
+<select id="screen" class="form-select mt-2">
+<option value="zin">Màn zin</option>
+<option value="ep">Ép kính</option>
+<option value="lo">Màn lô</option>
+</select>
+
+<select id="body" class="form-select mt-2">
+<option value="dep">Máy đẹp</option>
+<option value="xuoc">Xước</option>
+<option value="cop">Cấn móp</option>
+</select>
+
+<button class="btn btn-dark w-100 mt-3" onclick="calc()">Định giá</button>
+
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+/* ===== DATA iOS FULL ===== */
+const PHONES = {
+
+"iPhone X":{price:4000000,storage:[64,256],colors:{
+"Space Gray":0,"Silver":100000
+}},
+"iPhone XR":{price:4500000,storage:[64,128,256],colors:{
+"Black":0,"White":100000,"Blue":150000,"Yellow":0,"Coral":0,"Red":200000
+}},
+"iPhone XS":{price:5000000,storage:[64,256,512],colors:{
+"Space Gray":0,"Silver":100000,"Gold":200000
+}},
+"iPhone XS Max":{price:6000000,storage:[64,256,512],colors:{
+"Space Gray":0,"Silver":100000,"Gold":200000
+}},
+
+"iPhone 11":{price:6000000,storage:[64,128,256],colors:{
+"Black":0,"White":100000,"Green":100000,"Purple":150000,"Yellow":0,"Red":200000
+}},
+"iPhone 11 Pro":{price:7000000,storage:[64,256,512],colors:{
+"Midnight Green":300000,"Gold":200000,"Silver":100000,"Space Gray":0
+}},
+"iPhone 11 Pro Max":{price:8000000,storage:[64,256,512],colors:{
+"Midnight Green":300000,"Gold":200000,"Silver":100000,"Space Gray":0
+}},
+
+"iPhone 12 mini":{price:6500000,storage:[64,128,256],colors:{
+"Black":0,"White":100000,"Blue":150000,"Green":100000,"Purple":200000,"Red":200000
+}},
+"iPhone 12":{price:7500000,storage:[64,128,256],colors:{
+"Black":0,"White":100000,"Blue":150000,"Green":100000,"Purple":200000,"Red":200000
+}},
+"iPhone 12 Pro":{price:9000000,storage:[128,256,512],colors:{
+"Graphite":0,"Silver":100000,"Gold":200000,"Pacific Blue":300000
+}},
+"iPhone 12 Pro Max":{price:10500000,storage:[128,256,512],colors:{
+"Graphite":0,"Silver":100000,"Gold":200000,"Pacific Blue":300000
+}},
+
+"iPhone 13 mini":{price:8500000,storage:[128,256,512],colors:{
+"Midnight":0,"Starlight":100000,"Blue":150000,"Pink":200000,"Green":200000,"Red":200000
+}},
+"iPhone 13":{price:9500000,storage:[128,256,512],colors:{
+"Midnight":0,"Starlight":100000,"Blue":150000,"Pink":200000,"Green":200000,"Red":200000
+}},
+"iPhone 13 Pro":{price:11500000,storage:[128,256,512,1024],colors:{
+"Graphite":0,"Silver":100000,"Gold":200000,"Sierra Blue":300000,"Alpine Green":300000
+}},
+"iPhone 13 Pro Max":{price:13500000,storage:[128,256,512,1024],colors:{
+"Graphite":0,"Silver":100000,"Gold":200000,"Sierra Blue":300000,"Alpine Green":300000
+}},
+
+"iPhone 14":{price:11000000,storage:[128,256,512],colors:{
+"Midnight":0,"Starlight":100000,"Blue":150000,"Purple":200000,"Yellow":150000,"Red":200000
+}},
+"iPhone 14 Plus":{price:12000000,storage:[128,256,512],colors:{
+"Midnight":0,"Starlight":100000,"Blue":150000,"Purple":200000,"Yellow":150000,"Red":200000
+}},
+"iPhone 14 Pro":{price:14000000,storage:[128,256,512,1024],colors:{
+"Space Black":0,"Silver":100000,"Gold":200000,"Deep Purple":400000
+}},
+"iPhone 14 Pro Max":{price:16500000,storage:[128,256,512,1024],colors:{
+"Space Black":0,"Silver":100000,"Gold":200000,"Deep Purple":400000
+}},
+
+"iPhone 15":{price:13000000,storage:[128,256,512],colors:{
+"Black":0,"Blue":150000,"Green":100000,"Yellow":100000,"Pink":200000
+}},
+"iPhone 15 Plus":{price:14000000,storage:[128,256,512],colors:{
+"Black":0,"Blue":150000,"Green":100000,"Yellow":100000,"Pink":200000
+}},
+"iPhone 15 Pro":{price:18000000,storage:[128,256,512,1024],colors:{
+"Black Titanium":0,"White Titanium":200000,"Blue Titanium":300000,"Natural Titanium":400000
+}},
+"iPhone 15 Pro Max":{price:21000000,storage:[256,512,1024],colors:{
+"Black Titanium":0,"White Titanium":200000,"Blue Titanium":300000,"Natural Titanium":400000
+}},
+
+"iPhone 16":{price:16000000,storage:[128,256,512],colors:{
+"Black":0,"White":100000,"Blue":150000,"Pink":200000,"Green":100000
+}},
+"iPhone 16 Plus":{price:17000000,storage:[128,256,512],colors:{
+"Black":0,"White":100000,"Blue":150000,"Pink":200000,"Green":100000
+}},
+"iPhone 16 Pro":{price:22000000,storage:[128,256,512,1024],colors:{
+"Black Titanium":0,"White Titanium":200000,"Natural Titanium":400000,"Desert Titanium":500000
+}},
+"iPhone 16 Pro Max":{price:25000000,storage:[256,512,1024],colors:{
+"Black Titanium":0,"White Titanium":200000,"Natural Titanium":400000,"Desert Titanium":500000
+}},
+
+"iPhone 17":{price:18000000,storage:[128,256,512],colors:{
+"Black":0,"White":100000,"Blue":150000,"Pink":200000
+}},
+"iPhone 17 Plus":{price:19000000,storage:[128,256,512],colors:{
+"Black":0,"White":100000,"Blue":150000,"Pink":200000
+}},
+"iPhone 17 Pro":{price:24000000,storage:[128,256,512,1024],colors:{
+"Black Titanium":0,"White Titanium":200000,"Natural Titanium":400000,"Red Titanium":500000
+}},
+"iPhone 17 Pro Max":{price:27000000,storage:[256,512,1024],colors:{
+"Black Titanium":0,"White Titanium":200000,"Natural Titanium":400000,"Red Titanium":500000
+}}
+
+};
+
+/* ===== UI ===== */
+function toggleDropdown(){
+dropdown.style.display = dropdown.style.display==="none"?"block":"none";
+}
+
+function loadList(list){
+modelList.innerHTML="";
+list.forEach(m=>{
+modelList.innerHTML+=`<div class="p-2 item" onclick="selectModel('${m}')">${m}</div>`;
+});
+}
+
+let selected=null;
+
+function selectModel(m){
+selected=PHONES[m];
+modelInput.value=m;
+dropdown.style.display="none";
+
+/* storage */
+storage.innerHTML="";
+selected.storage.forEach(s=>{
+storage.innerHTML+=`<option>${s}GB</option>`;
+});
+
+/* color */
+color.innerHTML="";
+Object.keys(selected.colors).forEach(c=>{
+color.innerHTML+=`<option>${c}</option>`;
+});
+}
+
+search.oninput=e=>{
+let key=e.target.value.toLowerCase();
+loadList(Object.keys(PHONES).filter(m=>m.toLowerCase().includes(key)));
+};
+
+battery.oninput=()=>pinText.innerText=battery.value+"%";
+
+/* ===== CALC ===== */
+function calc(){
+
+if(!selected) return alert("Chọn model");
+
+let price=selected.price;
+
+let gb=parseInt(storage.value);
+if(gb>=256)price+=1000000;
+if(gb>=512)price+=2000000;
+if(gb==1024)price+=3000000;
+
+price+=selected.colors[color.value];
+
+if(battery.value<85)price-=500000;
+if(screen.value==="ep")price-=500000;
+if(screen.value==="lo")price-=1200000;
+if(body.value==="xuoc")price-=300000;
+if(body.value==="cop")price-=700000;
+
+let thu=Math.round(price*0.9);
+
+result.innerHTML=`
+<div class="card p-3 mt-3 text-center">
+<div style="font-size:24px;font-weight:700;color:#ff3b30">
+💰 ${thu.toLocaleString()}đ
+</div>
+</div>
+`;
+}
+
+/* INIT */
+loadList(Object.keys(PHONES));
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone PRO</title>
+
+<style>
+body{
+font-family:-apple-system,"SF Pro Display",sans-serif;
+background:#f2f2f7;
+margin:0;
+color:#1c1c1e;
+}
+
+/* HEADER */
+header{
+position:sticky;
+top:0;
+background:rgba(255,255,255,.8);
+backdrop-filter:blur(10px);
+padding:14px;
+text-align:center;
+font-weight:600;
+border-bottom:1px solid #ddd;
+}
+
+/* SUMMARY */
+#summaryBar{
+position:sticky;
+top:48px;
+background:rgba(255,255,255,.9);
+padding:8px;
+font-size:13px;
+border-bottom:1px solid #eee;
+display:none;
+}
+
+/* PROGRESS */
+.progress{height:4px;background:#e5e5ea}
+.progress-bar{height:100%;width:0;background:#007aff}
+
+/* CARD */
+.container{padding:15px;max-width:500px;margin:auto}
+.card{background:#fff;border-radius:18px;padding:18px}
+
+.step{display:none}
+.step.active{display:block}
+
+/* INPUT */
+input,select{
+width:100%;
+padding:14px;
+border-radius:14px;
+border:none;
+background:#f2f2f7;
+margin-top:10px;
+}
+
+/* BUTTON */
+.btn,.next{
+padding:14px;
+border-radius:14px;
+margin-top:10px;
+text-align:center;
+font-weight:600;
+}
+.btn{background:#eee}
+.btn.active{background:#007aff;color:#fff}
+.next{background:#007aff;color:#fff}
+
+/* RESULT */
+.result{background:#fff;padding:15px;margin-top:15px;border-radius:18px}
+.price{font-size:24px;text-align:center;color:#34c759;font-weight:700}
+
+/* SHEET */
+.sheet{
+position:fixed;left:0;right:0;bottom:0;
+height:70%;
+background:#fff;
+border-radius:20px 20px 0 0;
+transform:translateY(100%);
+transition:.3s;
+}
+.sheet.active{transform:translateY(0)}
+
+/* LOADING */
+.loading{
+position:fixed;inset:0;
+display:none;justify-content:center;align-items:center;
+background:rgba(0,0,0,.3);
+}
+.spinner{
+width:40px;height:40px;
+border:4px solid rgba(255,255,255,.3);
+border-top:4px solid #fff;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+
+<body>
+
+<header>Thu mua iPhone</header>
+
+<div id="summaryBar">
+📱 <span id="sumModel"></span> |
+💾 <span id="sumStorage"></span> |
+🔋 <span id="sumBattery"></span> |
+⭐ <span id="sumScore"></span>
+</div>
+
+<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+
+<div class="container">
+<div class="card" id="card">
+
+<!-- STEP -->
+<div class="step active">
+<select id="model"></select>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<div class="step">
+<select id="storage"></select>
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<div class="step">
+<input type="range" id="battery" min="70" max="100" value="90">
+<div><span id="batteryValue">90</span>%</div>
+
+<div class="btn" onclick="pick(this,'pin','zin')">Pin zin</div>
+<div class="btn" onclick="pick(this,'pin','thay')">Pin thay</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<div class="step">
+<div class="btn" onclick="pick(this,'body','zin')">Chưa bung</div>
+<div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<div class="step">
+<input id="expect" placeholder="vd 15">
+<div id="expectView"></div>
+
+<input id="name" placeholder="Tên khách">
+<input id="phone" placeholder="SĐT">
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="calc()">Xem giá</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<!-- CONTACT -->
+<div class="result">
+<a href="https://zalo.me/0827703579"><div class="next">Zalo</div></a>
+<a href="#"><div class="btn">Facebook</div></a>
+</div>
+
+<div class="result">
+<iframe src="https://www.google.com/maps?q=Can+Giuoc&output=embed" width="100%" height="200"></iframe>
+</div>
+
+</div>
+
+<!-- SHEET -->
+<div class="sheet" id="sheet">
+<div id="sheetData" style="padding:15px"></div>
+</div>
+
+<div class="loading" id="loading"><div class="spinner"></div></div>
+
+<script>
+
+// MODEL FULL
+const MODELS=[
+"iphone x","iphone xr","iphone xs","iphone xs max",
+"iphone 11","iphone 11 pro","iphone 11 pro max",
+"iphone 12 mini","iphone 12","iphone 12 pro","iphone 12 pro max",
+"iphone 13 mini","iphone 13","iphone 13 pro","iphone 13 pro max",
+"iphone 14","iphone 14 plus","iphone 14 pro","iphone 14 pro max",
+"iphone 15","iphone 15 plus","iphone 15 pro","iphone 15 pro max",
+"iphone 16","iphone 16 plus","iphone 16 pro","iphone 16 pro max",
+"iphone 17","iphone 17 plus","iphone 17 pro","iphone 17 pro max"
+];
+
+MODELS.forEach(x=>model.innerHTML+=`<option>${x}</option>`);
+
+// STEP
+let step=0,steps=document.querySelectorAll(".step");
+
+function show(){
+steps.forEach(s=>s.classList.remove("active"));
+steps[step].classList.add("active");
+progressBar.style.width=(step/(steps.length-1)*100)+"%";
+saveState();
+updateSummary();
+}
+
+function next(){if(step<steps.length-1){step++;show()}}
+function prev(){if(step>0){step--;show()}}
+
+// PICK
+let selected={};
+function pick(el,k,v){
+selected[k]=v;
+el.parentElement.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+updateSummary();
+}
+
+// PIN
+battery.oninput=()=>{batteryValue.innerText=battery.value;updateSummary()}
+
+// SCORE
+function calcScore(){
+let s=10;
+if(battery.value<85) s-=1;
+if(selected.pin==="thay") s-=1;
+if(selected.body==="bung") s-=2;
+if(s<5) s=5;
+return s.toFixed(1);
+}
+
+// SUMMARY
+function updateSummary(){
+if(!model.value)return;
+summaryBar.style.display="block";
+sumModel.innerText=model.value;
+sumStorage.innerText=storage.value||"-";
+sumBattery.innerText=battery.value+"%";
+sumScore.innerText=calcScore()+"/10";
+}
+
+// SAVE
+function saveState(){
+localStorage.setItem("formData",JSON.stringify({
+step,model:model.value,battery:battery.value,selected
+}));
+}
+
+// LOAD
+function loadState(){
+let d=JSON.parse(localStorage.getItem("formData")||"null");
+if(!d)return;
+step=d.step||0;
+model.value=d.model||model.value;
+battery.value=d.battery||90;
+selected=d.selected||{};
+batteryValue.innerText=battery.value;
+show();
+}
+
+// EXPECT
+expect.oninput=()=>{
+let raw=expect.value.replace(/\D/g,"");
+if(!raw)return expectView.innerText="";
+let num=parseInt(raw);
+if(num<1000) num*=1000000;
+expectView.innerText="👉 "+num.toLocaleString()+"đ";
+}
+
+// CRM
+function saveCustomer(d){
+let list=JSON.parse(localStorage.getItem("c")||"[]");
+list.unshift(d);
+localStorage.setItem("c",JSON.stringify(list));
+}
+
+// SHEET
+function openSheet(html){
+sheetData.innerHTML=html;
+sheet.classList.add("active");
+}
+
+// CALC
+function calc(){
+loading.style.display="flex";
+
+setTimeout(()=>{
+let price=15000000;
+let min=Math.round(price*0.9);
+let max=Math.round(price*1.05);
+
+saveCustomer({name:name.value,phone:phone.value,model:model.value});
+
+openSheet(`
+<h3>Kết quả</h3>
+📱 ${model.value}<br>
+🔋 ${battery.value}%<br>
+⭐ ${calcScore()}/10<br>
+💰 ${min.toLocaleString()} - ${max.toLocaleString()}đ
+`);
+
+loading.style.display="none";
+},700);
+}
+
+loadState();
+show();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone PRO</title>
+
+<style>
+body{font-family:Arial;background:#f5f6fa;margin:0}
+header{background:#ffd500;padding:14px;text-align:center;font-weight:700}
+
+.container{max-width:560px;margin:auto;padding:14px}
+.card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+
+.step{display:none;animation:fade .25s}
+.step.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{padding:12px;border:1px solid #ddd;border-radius:10px;background:#fff;font-weight:700;text-align:center;cursor:pointer}
+.btn.active{border:2px solid #ffd500;background:#fffbe6}
+
+.next{margin-top:12px;padding:12px;background:#ffd500;border:none;border-radius:10px;font-weight:700;width:100%}
+
+input,select{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:1px solid #ddd}
+
+.result{margin-top:14px;background:#fff;padding:14px;border-radius:12px}
+.price{font-size:26px;color:#0a7f2e;font-weight:800;text-align:center}
+.sub{font-size:13px;color:#555}
+
+.loading{display:none;text-align:center;margin-top:10px}
+
+#priceBox{display:none;margin-top:14px}
+#priceDot{position:absolute;top:-5px;width:18px;height:18px;background:#e53935;border-radius:50%;transform:translateX(-50%);animation:pulse 1s infinite}
+@keyframes pulse{0%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.2)}100%{transform:translateX(-50%) scale(1)}}
+
+.contact{margin-top:16px;background:#fff;padding:14px;border-radius:12px}
+.link{display:block;padding:12px;margin-top:8px;border-radius:8px;text-align:center;font-weight:700;color:#fff;text-decoration:none}
+.zalo{background:#0084ff}.call{background:#00a86b}
+
+.tag{display:inline-block;background:#f1f3f5;border-radius:999px;padding:4px 8px;margin-right:6px;margin-top:6px;font-size:12px}
+</style>
+</head>
+
+<body>
+<header>📱 THU MUA IPHONE – PRO CHECK</header>
+
+<div class="container">
+<div class="card">
+
+<!-- STEP 1 -->
+<div class="step active" id="step1">
+<h3>Chọn dòng máy</h3>
+<select id="model"></select>
+<button class="next" onclick="next(2)">Tiếp</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="step2">
+<h3>Dung lượng</h3>
+<div class="grid">
+<div class="btn" onclick="pick(this,'storage','64')">64GB</div>
+<div class="btn" onclick="pick(this,'storage','128')">128GB</div>
+<div class="btn" onclick="pick(this,'storage','256')">256GB</div>
+<div class="btn" onclick="pick(this,'storage','512')">512GB</div>
+</div>
+<button class="next" onclick="check(3,'storage')">Tiếp</button>
+</div>
+
+<!-- STEP 3: PIN % + ZIN/THAY -->
+<div class="step" id="step3">
+<h3>Pin</h3>
+<input type="range" id="batteryRange" min="70" max="100" value="90">
+<div style="text-align:center;font-weight:700;margin-top:6px">🔋 <span id="batteryValue">90</span>%</div>
+
+<div class="grid" style="margin-top:10px">
+<div class="btn" onclick="pick(this,'pinType','zin')">Pin zin</div>
+<div class="btn" onclick="pick(this,'pinType','thay')">Pin đã thay</div>
+</div>
+
+<button class="next" onclick="setBattery()">Tiếp</button>
+</div>
+
+<!-- STEP 4: TÌNH TRẠNG + MÃ + MÀU -->
+<div class="step" id="step4">
+<h3>Thông tin máy</h3>
+
+<div class="grid">
+<div class="btn" onclick="pick(this,'body','zin')">Chưa bung</div>
+<div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+</div>
+
+<select id="market">
+<option value="VNA">VN/A (cộng)</option>
+<option value="LL">LL/A</option>
+<option value="ZP">ZP/A</option>
+<option value="KH">KH/A</option>
+</select>
+
+<select id="color">
+<option value="normal">Màu phổ thông</option>
+<option value="hot">Màu hot (Titan/Gold…)</option>
+<option value="hard">Màu khó bán</option>
+</select>
+
+<button class="next" onclick="saveInfo()">Tiếp</button>
+</div>
+
+<!-- STEP 5: CHECK LỖI -->
+<div class="step" id="step5">
+<h3>🔎 Kiểm tra</h3>
+
+<b>Màn</b><br>
+<label><input type="radio" name="screen" value="ok"> OK</label><br>
+<label><input type="radio" name="screen" value="scratch"> Trầy</label><br>
+<label><input type="radio" name="screen" value="line"> Sọc</label><br>
+<label><input type="radio" name="screen" value="broken"> Bể</label><br><br>
+
+<b>Camera</b><br>
+<label><input type="radio" name="cam" value="ok"> OK</label><br>
+<label><input type="radio" name="cam" value="blur"> Mờ</label><br>
+<label><input type="radio" name="cam" value="dead"> Hư</label><br><br>
+
+<b>Face ID</b><br>
+<label><input type="radio" name="face" value="ok"> OK</label><br>
+<label><input type="radio" name="face" value="fail"> Lỗi</label><br><br>
+
+<b>Main</b><br>
+<label><input type="radio" name="main" value="ok"> Zin</label><br>
+<label><input type="radio" name="main" value="repair"> Sửa</label><br>
+<label><input type="radio" name="main" value="heavy"> Lỗi nặng</label><br><br>
+
+<button class="next" onclick="next(6)">Tiếp</button>
+</div>
+
+<!-- STEP 6 -->
+<div class="step" id="step6">
+<h3>Khách</h3>
+<input id="name" placeholder="Tên">
+<input id="phone" placeholder="SĐT">
+<input id="expect" placeholder="Giá mong muốn (vd 15tr)">
+<button class="next" onclick="calc()">XEM GIÁ</button>
+<div class="loading" id="loading">⏳ Đang định giá...</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<!-- THANH GIÁ CỨNG -->
+<div id="priceBox">
+<div style="font-size:14px;margin-bottom:5px">💡 Giá tham khảo</div>
+<div style="position:relative;height:8px;background:#ddd;border-radius:10px">
+<div id="priceFill" style="position:absolute;height:8px;background:#ffd500;border-radius:10px;width:50%"></div>
+<div id="priceDot"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:5px">
+<span id="minPrice"></span><span id="maxPrice"></span>
+</div>
+<div style="text-align:center;margin-top:8px;font-weight:700;color:#e53935">
+👉 Giá đề xuất: <span id="suggestPrice"></span>
+</div>
+</div>
+
+<div class="contact">
+<a class="link zalo" id="zaloBtn" target="_blank">💬 Gửi Zalo</a>
+<a class="link call" href="tel:0827703579">📞 0827 703 579</a>
+</div>
+
+</div>
+
+<script>
+// ===== DATA =====
+const MODELS=[
+"iphone x","iphone xr","iphone xs","iphone xs max",
+"iphone 11","iphone 11 pro","iphone 11 pro max",
+"iphone 12","iphone 12 pro","iphone 12 pro max",
+"iphone 13","iphone 13 pro","iphone 13 pro max",
+"iphone 14","iphone 14 plus","iphone 14 pro","iphone 14 pro max",
+"iphone 15","iphone 15 plus","iphone 15 pro","iphone 15 pro max"
+];
+
+const BASE={
+"iphone x":2500000,"iphone xr":3500000,"iphone xs":4000000,"iphone xs max":4500000,
+"iphone 11":5000000,"iphone 11 pro":6000000,"iphone 11 pro max":7000000,
+"iphone 12":8000000,"iphone 12 pro":10000000,"iphone 12 pro max":12000000,
+"iphone 13":10000000,"iphone 13 pro":13000000,"iphone 13 pro max":15000000,
+"iphone 14":12000000,"iphone 14 plus":13000000,"iphone 14 pro":14000000,"iphone 14 pro max":15000000,
+"iphone 15":14000000,"iphone 15 plus":15000000,"iphone 15 pro":16000000,"iphone 15 pro max":17000000
+};
+
+// ===== INIT =====
+let m=document.getElementById("model");
+MODELS.forEach(x=>{let o=document.createElement("option");o.value=x;o.textContent=x.toUpperCase();m.appendChild(o);});
+let selected={};
+
+// ===== STEP =====
+function next(n){document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));document.getElementById("step"+n).classList.add("active");}
+function check(n,key){if(!selected[key]){alert("Chọn trước");return;}next(n);}
+function pick(el,key,val){let box=el.parentElement;box.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));el.classList.add("active");selected[key]=val;}
+
+// ===== PIN UI =====
+let br=document.getElementById("batteryRange"), bt=document.getElementById("batteryValue");
+br.oninput=()=>bt.innerText=br.value;
+function setBattery(){
+selected.battery = parseInt(br.value);
+if(!selected.pinType){alert("Chọn pin zin/thay");return;}
+next(4);
+}
+
+// ===== SAVE INFO =====
+function saveInfo(){
+selected.body = selected.body || "zin";
+selected.market = document.getElementById("market").value;
+selected.color = document.getElementById("color").value;
+next(5);
+}
+
+// ===== FORMAT MONEY =====
+function formatNumber(n){return n.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+document.getElementById("expect").addEventListener("input",e=>e.target.value=formatNumber(e.target.value));
+function parseMoney(v){return parseInt(v.replace(/\./g,''))||0;}
+
+// ===== HELPERS =====
+function scale(m){
+if(m.includes("pro max")) return 1.2;
+if(m.includes("pro")) return 1.1;
+if(m.includes("plus")) return 1.05;
+return 1;
+}
+function batteryLabel(b){
+if(b>=90) return "Pin đẹp";
+if(b>=85) return "Pin ổn";
+if(b>=80) return "Pin TB";
+if(b>=75) return "Pin yếu";
+return "Pin kém";
+}
+function getCheckSummary(){
+let arr=[];
+let s=document.querySelector('input[name="screen"]:checked')?.value;
+if(s && s!=="ok") arr.push("Màn");
+let c=document.querySelector('input[name="cam"]:checked')?.value;
+if(c && c!=="ok") arr.push("Cam");
+let f=document.querySelector('input[name="face"]:checked')?.value;
+if(f==="fail") arr.push("Face");
+let ma=document.querySelector('input[name="main"]:checked')?.value;
+if(ma==="repair") arr.push("Main sửa");
+if(ma==="heavy") arr.push("Main nặng");
+return arr.length?arr.join(", "):"Máy đẹp";
+}
+function rankMachine(price, base){
+let r=price/base;
+if(r>0.85) return "Máy đẹp, giá cao";
+if(r>0.7) return "Máy ổn, giá tốt";
+if(r>0.55) return "Máy trung bình";
+return "Máy lỗi nhiều, giá thấp";
+}
+
+// ===== SLIDER (CỨNG) =====
+function showSlider(price){
+let min=Math.round(price*0.9), max=Math.round(price*1.1);
+document.getElementById("priceBox").style.display="block";
+document.getElementById("minPrice").innerText=min.toLocaleString()+"đ";
+document.getElementById("maxPrice").innerText=max.toLocaleString()+"đ";
+document.getElementById("suggestPrice").innerText=price.toLocaleString()+"đ";
+let percent=((price-min)/(max-min))*100;
+document.getElementById("priceDot").style.left=percent+"%";
+document.getElementById("priceFill").style.width=percent+"%";
+}
+
+// ===== CALC =====
+function calc(){
+document.getElementById("loading").style.display="block";
+
+setTimeout(()=>{
+let model=m.value, base=BASE[model];
+if(!base){alert("Thiếu giá base");return;}
+
+let price = base * 0.9 * scale(model);
+
+// DUNG LƯỢNG
+if(selected.storage==="256") price+=800000;
+if(selected.storage==="512") price+=1500000;
+
+// PIN % (gom mốc)
+let b=selected.battery||90;
+if(b>=90) price+=200000;
+else if(b>=85) price+=0;
+else if(b>=80) price-=300000;
+else if(b>=75) price-=600000;
+else price-=1000000;
+
+// PIN THAY
+if(selected.pinType==="thay") price-=600000;
+
+// BUNG
+if(selected.body==="bung") price-=1200000;
+
+// MÃ
+if(selected.market==="VNA") price+=200000;
+
+// MÀU
+if(selected.color==="hot") price+=300000;
+if(selected.color==="hard") price-=300000;
+
+// LỖI CHI TIẾT
+let s=document.querySelector('input[name="screen"]:checked')?.value;
+if(s==="scratch") price-=300000;
+if(s==="line") price-=1500000;
+if(s==="broken") price-=3000000;
+
+let c=document.querySelector('input[name="cam"]:checked')?.value;
+if(c==="blur") price-=800000;
+if(c==="dead") price-=2000000;
+
+let f=document.querySelector('input[name="face"]:checked')?.value;
+if(f==="fail") price-=1500000;
+
+let ma=document.querySelector('input[name="main"]:checked')?.value;
+if(ma==="repair") price-=1000000;
+if(ma==="heavy") price-=3000000;
+
+// SÀN
+if(price < base*0.6) price = base*0.6;
+
+// DEAL THEO GIÁ KHÁCH
+let expect=parseMoney(document.getElementById("expect").value);
+let final=price;
+if(expect){
+if(expect>price) final=price+200000;
+else final=expect+200000;
+}
+
+document.getElementById("loading").style.display="none";
+
+// RESULT
+document.getElementById("result").innerHTML=`
+<div class="result">
+<div class="sub">
+<span class="tag">${model.toUpperCase()}</span>
+<span class="tag">${selected.storage}GB</span>
+<span class="tag">🔋 ${selected.battery}% (${batteryLabel(selected.battery)})</span>
+<span class="tag">${selected.pinType==="zin"?"Pin zin":"Pin thay"}</span>
+<span class="tag">${selected.body==="zin"?"Chưa bung":"Đã bung"}</span>
+<span class="tag">${selected.market}</span>
+<span class="tag">${selected.color==="hot"?"Màu hot":(selected.color==="hard"?"Màu khó":"Màu thường")}</span>
+</div>
+
+<div class="sub" style="margin-top:8px">🧪 Kiểm tra: ${getCheckSummary()}</div>
+<div class="sub">⭐ ${rankMachine(price, base)}</div>
+
+<div class="sub" style="margin-top:8px">
+💡 Giá tham khảo: ${Math.round(price*0.95).toLocaleString()}đ - ${Math.round(price*1.05).toLocaleString()}đ
+</div>
+
+<div class="price">${Math.round(final).toLocaleString()}đ</div>
+</div>
+`;
+
+showSlider(price);
+
+// ZALO
+let msg=encodeURIComponent(
+`BÁN IPHONE\n${model.toUpperCase()} ${selected.storage}GB\nPin ${selected.battery}% (${batteryLabel(selected.battery)})\n${selected.pinType==="zin"?"Pin zin":"Pin thay"} - ${selected.body}\n${selected.market} - ${selected.color}\nCheck: ${getCheckSummary()}\nGiá: ${Math.round(final).toLocaleString()}đ`
+);
+document.getElementById("zaloBtn").href="https://zalo.me/0827703579?text="+msg;
+
+},500);
+}
+</script>
+</body>
+</html>

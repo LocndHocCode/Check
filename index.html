@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone PRO</title>
+<meta name="description" content="Thu mua iPhone giá cao, định giá nhanh, hỗ trợ tận nơi.">
+
+<style>
+:root{
+  --bg:#f2f2f7;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --blue:#007aff;
+  --green:#34c759;
+  --shadow:0 10px 25px rgba(0,0,0,.08);
+  --radius:20px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:#111827;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(229,231,235,.7);
+}
+
+.header-inner{
+  max-width:520px;
+  margin:0 auto;
+  padding:14px 16px;
+  position:relative;
+  text-align:center;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+
+.admin-btn{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:#111827;
+  color:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.progress{
+  height:4px;
+  background:#ddd;
+}
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--blue),var(--green));
+  transition:width .3s ease;
+}
+
+.summary{
+  max-width:520px;
+  margin:0 auto;
+  padding:8px 16px 10px;
+  font-size:13px;
+  color:#374151;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.step-text{
+  max-width:520px;
+  margin:0 auto;
+  padding:8px 16px 0;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.container{
+  max-width:520px;
+  margin:0 auto;
+  padding:15px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow);
+  animation:fadeUp .35s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.step{display:none}
+.step.active{
+  display:block;
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateX(14px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+input,select{
+  width:100%;
+  padding:14px 14px;
+  margin-top:10px;
+  border:none;
+  border-radius:14px;
+  background:#f3f4f6;
+  outline:none;
+  font-size:15px;
+}
+
+input:focus,select:focus{
+  box-shadow:0 0 0 2px rgba(0,122,255,.18);
+  background:#fff;
+}
+
+.btn,.next,.secondary{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  margin-top:10px;
+  text-align:center;
+  font-weight:700;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .12s ease, opacity .12s ease, background .12s ease;
+}
+.btn:active,.next:active,.secondary:active,.admin-btn:active,.sheet-close:active{
+  transform:scale(.97);
+}
+
+.btn{
+  background:#eef2f7;
+  color:#111827;
+}
+.btn.active{
+  background:var(--blue);
+  color:#fff;
+}
+.next{
+  background:var(--blue);
+  color:#fff;
+}
+.secondary{
+  background:#fff;
+  color:#111827;
+  border:1px solid var(--line);
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.mini{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+.price{
+  font-size:26px;
+  text-align:center;
+  color:var(--green);
+  font-weight:800;
+  margin-top:15px;
+}
+.score{
+  text-align:center;
+  margin-top:8px;
+  color:#4b5563;
+  font-size:13px;
+}
+
+.result{
+  background:var(--card);
+  padding:15px;
+  margin-top:15px;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  animation:pop .25s ease;
+}
+@keyframes pop{
+  from{opacity:0;transform:scale(.97)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.loading{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:10px;
+  background:rgba(255,255,255,.55);
+  backdrop-filter:blur(4px);
+  z-index:999;
+}
+.loading.active{display:flex}
+.spinner{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:3px solid #d1d5db;
+  border-top-color:var(--blue);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(4px);
+  opacity:0;
+  visibility:hidden;
+  transition:.25s ease;
+  z-index:900;
+}
+.overlay.active{
+  opacity:1;
+  visibility:visible;
+}
+
+.bottom-sheet{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  background:#fff;
+  border-radius:20px 20px 0 0;
+  transform:translateY(100%);
+  transition:.35s cubic-bezier(.22,1,.36,1);
+  z-index:1000;
+  box-shadow:0 -12px 30px rgba(0,0,0,.10);
+  max-height:88vh;
+  overflow:auto;
+}
+.bottom-sheet.active{transform:translateY(0)}
+
+.sheet-bar{
+  width:44px;
+  height:5px;
+  background:#d1d5db;
+  border-radius:999px;
+  margin:10px auto 0;
+}
+
+.sheet-head{
+  position:sticky;
+  top:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 15px 0;
+  background:#fff;
+  z-index:2;
+}
+
+.sheet-title{
+  font-size:15px;
+  font-weight:800;
+}
+
+.sheet-close{
+  border:none;
+  background:#f3f4f6;
+  color:#111827;
+  width:32px;
+  height:32px;
+  border-radius:999px;
+  font-size:18px;
+  line-height:32px;
+}
+
+.sheet-content{
+  padding:15px;
+}
+
+.contact-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  margin-top:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,.04);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.contact-card:active{
+  transform:scale(.98);
+}
+.contact-card .left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eef2f7;
+}
+.sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.admin-modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1100;
+  padding:16px;
+}
+.admin-modal.active{display:flex}
+.admin-card{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
+}
+.admin-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.admin-top strong{font-size:16px}
+.admin-close{
+  border:none;
+  background:#f3f4f6;
+  width:32px;
+  height:32px;
+  border-radius:999px;
+  font-size:18px;
+}
+.admin-stats{
+  margin-top:10px;
+  padding:12px;
+  border-radius:14px;
+  background:#f9fafb;
+  color:#374151;
+  font-size:13px;
+  line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <span>📱 Thu mua iPhone</span>
+    <button class="admin-btn" type="button" onclick="openAdmin()">Admin</button>
+  </div>
+</header>
+
+<div class="summary" id="summary">Chưa chọn</div>
+<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+<div class="step-text" id="stepText">Bước 1/5</div>
+
+<div class="container">
+  <div class="card">
+
+    <div class="step active" data-step="1">
+      <select id="model"></select>
+      <div class="next" onclick="next()">Tiếp</div>
+    </div>
+
+    <div class="step" data-step="2">
+      <select id="storage"></select>
+
+      <select id="color">
+        <option value="Black">Black</option>
+        <option value="White">White</option>
+        <option value="Gold">Gold</option>
+        <option value="Purple">Purple</option>
+      </select>
+
+      <select id="market">
+        <option value="VNA">VN/A</option>
+        <option value="LL">LL/A</option>
+        <option value="ZP">ZP/A</option>
+        <option value="JA">J/A</option>
+        <option value="KH">KH/A</option>
+        <option value="CH">CH/A</option>
+        <option value="EU">EU</option>
+      </select>
+
+      <div class="btn" onclick="prev()">← Quay lại</div>
+      <div class="next" onclick="next()">Tiếp</div>
+    </div>
+
+    <div class="step" data-step="3">
+      <input type="range" id="battery" min="70" max="100" value="90">
+      <div class="mini">🔋 <span id="batteryValue">90</span>% — <span id="batteryText">Pin tốt</span></div>
+
+      <div class="btn" onclick="pick(this,'pin','zin')">Pin zin</div>
+      <div class="btn" onclick="pick(this,'pin','thay')">Pin thay</div>
+
+      <div class="btn" onclick="prev()">← Quay lại</div>
+      <div class="next" onclick="next()">Tiếp</div>
+    </div>
+
+    <div class="step" data-step="4">
+      <div class="btn" onclick="pick(this,'body','zin')">Chưa bung</div>
+      <div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+
+      <div class="btn" onclick="prev()">← Quay lại</div>
+      <div class="next" onclick="next()">Tiếp</div>
+    </div>
+
+    <div class="step" data-step="5">
+      <input id="name" placeholder="Tên khách">
+      <input id="phone" placeholder="SĐT">
+
+      <div class="btn" onclick="prev()">← Quay lại</div>
+      <div class="next" onclick="calc()">Xem giá</div>
+    </div>
+
+  </div>
+
+  <div id="result"></div>
+
+  <div class="secondary" onclick="resetForm()">🔄 Làm lại</div>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeContact()"></div>
+
+<div id="contactBox" class="bottom-sheet" aria-hidden="true">
+  <div class="sheet-bar"></div>
+  <div class="sheet-head">
+    <div class="sheet-title">Liên hệ chốt giá</div>
+    <button class="sheet-close" type="button" onclick="closeContact()">×</button>
+  </div>
+
+  <div class="sheet-content">
+    <div class="result" style="margin-top:0">
+      <div style="font-weight:700;margin-bottom:6px">Thông tin vừa chọn</div>
+      <div id="contactSummary" style="font-size:14px;color:#4b5563;line-height:1.6"></div>
+    </div>
+
+    <div class="result">
+      <div style="font-weight:700;margin-bottom:10px">📍 Cửa hàng</div>
+      <iframe
+        src="https://maps.google.com/maps?q=Can%20Giuoc&t=&z=15&output=embed"
+        width="100%"
+        height="160"
+        style="border:none;border-radius:14px"
+        loading="lazy"></iframe>
+    </div>
+
+    <div class="contact-card" onclick="openFB()">
+      <div class="left">
+        <img id="fbAvatar" class="avatar" alt="Facebook avatar">
+        <div>
+          <div id="fbName">Nguyễn Lộc</div>
+          <div class="sub">Facebook cá nhân</div>
+        </div>
+      </div>
+      <div>→</div>
+    </div>
+
+    <div class="contact-card" onclick="openZalo()">
+      <div class="left">
+        <div style="width:40px;height:40px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:18px">💬</div>
+        <div>
+          <div>Zalo</div>
+          <div class="sub">Chat nhanh</div>
+        </div>
+      </div>
+      <div>→</div>
+    </div>
+  </div>
+</div>
+
+<div id="adminOverlay" class="overlay" onclick="closeAdmin()"></div>
+
+<div id="adminBox" class="admin-modal">
+  <div class="admin-card">
+    <div class="admin-top">
+      <strong>Admin</strong>
+      <button class="admin-close" type="button" onclick="closeAdmin()">×</button>
+    </div>
+
+    <input id="adminUser" placeholder="Tài khoản">
+    <input id="adminPass" placeholder="Mật khẩu" type="password">
+    <div class="next" onclick="loginAdmin()">Đăng nhập</div>
+
+    <div id="adminPanel" style="display:none">
+      <div id="adminStats" class="admin-stats"></div>
+      <div class="next" onclick="downloadData()">Tải CSV</div>
+      <div class="btn" onclick="clearData()">Xoá dữ liệu</div>
+    </div>
+  </div>
+</div>
+
+<div id="loading" class="loading">
+  <div class="spinner"></div>
+  <div>Đang tính giá...</div>
+</div>
+
+<script>
+const FB_ID = "100015148662826";
+const FB_NAME = "Nguyễn Lộc";
+const FB_PROFILE_URL = `https://www.facebook.com/profile.php?id=${FB_ID}`;
+const ZALO_URL = "https://zalo.me/0827703579";
+
+const dom = {
+  model: document.getElementById("model"),
+  storage: document.getElementById("storage"),
+  color: document.getElementById("color"),
+  market: document.getElementById("market"),
+  battery: document.getElementById("battery"),
+  batteryValue: document.getElementById("batteryValue"),
+  batteryText: document.getElementById("batteryText"),
+  result: document.getElementById("result"),
+  progressBar: document.getElementById("progressBar"),
+  stepText: document.getElementById("stepText"),
+  summary: document.getElementById("summary"),
+  loading: document.getElementById("loading"),
+  contactBox: document.getElementById("contactBox"),
+  overlay: document.getElementById("overlay"),
+  contactSummary: document.getElementById("contactSummary"),
+  fbAvatar: document.getElementById("fbAvatar"),
+  fbName: document.getElementById("fbName"),
+  adminOverlay: document.getElementById("adminOverlay"),
+  adminBox: document.getElementById("adminBox"),
+  adminUser: document.getElementById("adminUser"),
+  adminPass: document.getElementById("adminPass"),
+  adminPanel: document.getElementById("adminPanel"),
+  adminStats: document.getElementById("adminStats")
+};
+
+const MODEL_DATA = [
+  { key:"iphone x", label:"iPhone X", price:5000000, storage:[64,256] },
+  { key:"iphone xr", label:"iPhone XR", price:5500000, storage:[64,128,256] },
+  { key:"iphone xs", label:"iPhone XS", price:6000000, storage:[64,256,512] },
+  { key:"iphone xs max", label:"iPhone XS Max", price:7000000, storage:[64,256,512] },
+
+  { key:"iphone 11", label:"iPhone 11", price:8000000, storage:[64,128,256] },
+  { key:"iphone 11 pro", label:"iPhone 11 Pro", price:9500000, storage:[64,256,512] },
+  { key:"iphone 11 pro max", label:"iPhone 11 Pro Max", price:10500000, storage:[64,256,512] },
+
+  { key:"iphone 12 mini", label:"iPhone 12 mini", price:8000000, storage:[64,128,256] },
+  { key:"iphone 12", label:"iPhone 12", price:9500000, storage:[64,128,256] },
+  { key:"iphone 12 pro", label:"iPhone 12 Pro", price:11500000, storage:[128,256,512] },
+  { key:"iphone 12 pro max", label:"iPhone 12 Pro Max", price:12500000, storage:[128,256,512] },
+
+  { key:"iphone 13 mini", label:"iPhone 13 mini", price:10000000, storage:[128,256,512] },
+  { key:"iphone 13", label:"iPhone 13", price:12000000, storage:[128,256,512] },
+  { key:"iphone 13 pro", label:"iPhone 13 Pro", price:15000000, storage:[128,256,512,1024] },
+  { key:"iphone 13 pro max", label:"iPhone 13 Pro Max", price:16500000, storage:[128,256,512,1024] },
+
+  { key:"iphone 14", label:"iPhone 14", price:14000000, storage:[128,256,512] },
+  { key:"iphone 14 plus", label:"iPhone 14 Plus", price:15000000, storage:[128,256,512] },
+  { key:"iphone 14 pro", label:"iPhone 14 Pro", price:18000000, storage:[128,256,512,1024] },
+  { key:"iphone 14 pro max", label:"iPhone 14 Pro Max", price:19500000, storage:[128,256,512,1024] },
+
+  { key:"iphone 15", label:"iPhone 15", price:17000000, storage:[128,256,512] },
+  { key:"iphone 15 plus", label:"iPhone 15 Plus", price:18000000, storage:[128,256,512] },
+  { key:"iphone 15 pro", label:"iPhone 15 Pro", price:22000000, storage:[128,256,512,1024] },
+  { key:"iphone 15 pro max", label:"iPhone 15 Pro Max", price:24000000, storage:[256,512,1024] },
+
+  { key:"iphone 16", label:"iPhone 16", price:20000000, storage:[128,256,512] },
+  { key:"iphone 16 plus", label:"iPhone 16 Plus", price:22000000, storage:[128,256,512] },
+  { key:"iphone 16 pro", label:"iPhone 16 Pro", price:26000000, storage:[128,256,512,1024] },
+  { key:"iphone 16 pro max", label:"iPhone 16 Pro Max", price:28000000, storage:[256,512,1024] },
+
+  { key:"iphone 17", label:"iPhone 17", price:23000000, storage:[128,256,512] },
+  { key:"iphone 17 plus", label:"iPhone 17 Plus", price:25000000, storage:[128,256,512] },
+  { key:"iphone 17 pro", label:"iPhone 17 Pro", price:29000000, storage:[128,256,512,1024] },
+  { key:"iphone 17 pro max", label:"iPhone 17 Pro Max", price:31000000, storage:[256,512,1024] }
+];
+
+const MODEL_MAP = Object.fromEntries(MODEL_DATA.map(item => [item.key, item]));
+
+const STATE = {
+  step: 0,
+  selected: {}
+};
+
+function populateModels(){
+  dom.model.innerHTML = MODEL_DATA
+    .map(item => `<option value="${item.key}">${item.label}</option>`)
+    .join("");
+  dom.model.value = MODEL_DATA[0].key;
+}
+
+function currentModel(){
+  return MODEL_MAP[dom.model.value] || MODEL_DATA[0];
+}
+
+function loadStorage(){
+  const item = currentModel();
+  dom.storage.innerHTML = item.storage
+    .map(gb => `<option value="${gb}">${gb}GB</option>`)
+    .join("");
+  dom.storage.value = String(item.storage[0]);
+}
+
+function fillStaticSelects(){
+  dom.color.innerHTML = ["Black","White","Gold","Purple"]
+    .map(c => `<option value="${c}">${c}</option>`)
+    .join("");
+
+  dom.market.innerHTML = [
+    ["VNA","VN/A"],
+    ["LL","LL/A"],
+    ["ZP","ZP/A"],
+    ["JA","J/A"],
+    ["KH","KH/A"],
+    ["CH","CH/A"],
+    ["EU","EU"]
+  ].map(([value,label]) => `<option value="${value}">${label}</option>`).join("");
+}
+
+function batteryStatusText(pct){
+  const n = Number(pct);
+  if(n >= 90) return "Pin rất tốt";
+  if(n >= 85) return "Pin tốt";
+  if(n >= 80) return "Pin yếu nhẹ";
+  return "Pin kém";
+}
+
+function isModernModel(key){
+  return key.startsWith("iphone 15") || key.startsWith("iphone 16") || key.startsWith("iphone 17");
+}
+
+function storageAdjust(gb){
+  const n = Number(gb);
+  if(n === 64) return -700000;
+  if(n === 128) return 0;
+  if(n === 256) return 300000;
+  if(n === 512) return 0;
+  if(n === 1024) return -500000;
+  return 0;
+}
+
+function colorAdjust(value){
+  switch(String(value).toLowerCase()){
+    case "black": return 200000;
+    case "white": return 100000;
+    case "gold": return -300000;
+    case "purple": return -200000;
+    default: return 0;
+  }
+}
+
+function marketAdjust(code){
+  switch(code){
+    case "VNA": return 200000;
+    case "LL": return 0;
+    case "ZP": return -150000;
+    case "JA": return -200000;
+    case "KH": return -200000;
+    case "CH": return -500000;
+    case "EU": return -100000;
+    default: return 0;
+  }
+}
+
+function batteryAdjust(modelKey, pct){
+  const n = Number(pct);
+  let penalty = 0;
+
+  if(isModernModel(modelKey)){
+    if(n < 90) penalty -= 300000;
+    if(n < 85) penalty -= 300000;
+  }else{
+    if(n < 85) penalty -= 500000;
+    if(n < 80) penalty -= 500000;
+  }
+  return penalty;
+}
+
+function scoreCalc(){
+  let score = 10;
+  const batteryPct = Number(dom.battery.value);
+  const storageGb = Number(dom.storage.value);
+
+  if(batteryPct < 90) score -= 0.5;
+  if(batteryPct < 85) score -= 0.5;
+  if(STATE.selected.pin === "thay") score -= 1;
+  if(STATE.selected.body === "bung") score -= 2;
+  if(storageGb === 64 || storageGb === 1024) score -= 0.5;
+
+  return Math.max(5, score).toFixed(1);
+}
+
+function money(n){
+  return Number(n).toLocaleString("vi-VN") + "đ";
+}
+
+function updateBatteryUI(){
+  const pct = Number(dom.battery.value);
+  dom.batteryValue.textContent = pct;
+  dom.batteryText.textContent = batteryStatusText(pct);
+}
+
+function updateSummary(){
+  const modelLabel = currentModel().label;
+  dom.summary.textContent = `${modelLabel} • ${dom.storage.value || "-"}GB • Pin ${dom.battery.value}%`;
+  dom.stepText.textContent = `Bước ${STATE.step + 1}/5`;
+  dom.progressBar.style.width = `${(STATE.step / 4) * 100}%`;
+}
+
+function showStep(index){
+  STATE.step = index;
+  document.querySelectorAll(".step").forEach((el, i) => {
+    el.classList.toggle("active", i === index);
+  });
+  updateSummary();
+}
+
+function next(){
+  if(STATE.step < 4){
+    showStep(STATE.step + 1);
+  }
+}
+
+function prev(){
+  if(STATE.step > 0){
+    showStep(STATE.step - 1);
+  }
+}
+
+function clearActiveButtons(){
+  document.querySelectorAll(".btn.active").forEach(btn => btn.classList.remove("active"));
+}
+
+function pick(el, key, value){
+  STATE.selected[key] = value;
+  el.parentElement.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function saveCustomer(data){
+  const list = JSON.parse(localStorage.getItem("customers") || "[]");
+  list.unshift({ ...data, time: new Date().toLocaleString() });
+  localStorage.setItem("customers", JSON.stringify(list.slice(0, 200)));
+}
+
+function restoreCustomersStats(){
+  const list = JSON.parse(localStorage.getItem("customers") || "[]");
+  dom.adminStats.innerHTML = `Tổng khách đã lưu: <b>${list.length}</b>`;
+}
+
+function openContact(){
+  dom.overlay.classList.add("active");
+  dom.contactBox.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeContact(){
+  dom.overlay.classList.remove("active");
+  dom.contactBox.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function openFB(){
+  window.location.href = `fb://profile/${FB_ID}`;
+  setTimeout(() => {
+    window.open(FB_PROFILE_URL, "_blank", "noopener");
+  }, 500);
+}
+
+function openZalo(){
+  window.open(ZALO_URL, "_blank", "noopener");
+}
+
+function buildContactSummary(priceMin, priceMax){
+  const modelLabel = currentModel().label;
+  const pinLabel = STATE.selected.pin === "thay" ? "Pin thay" : "Pin zin";
+  const bodyLabel = STATE.selected.body === "bung" ? "Đã bung" : "Chưa bung";
+
+  return `
+    <div>Máy: <b>${modelLabel}</b></div>
+    <div>Dung lượng: <b>${dom.storage.value}GB</b></div>
+    <div>Màu: <b>${dom.color.value}</b></div>
+    <div>Mạng: <b>${dom.market.value}</b></div>
+    <div>Pin: <b>${dom.battery.value}%</b> — ${batteryStatusText(dom.battery.value)}</div>
+    <div>${pinLabel} • ${bodyLabel}</div>
+    <div>Giá: <b>${money(priceMin)} - ${money(priceMax)}</b></div>
+  `;
+}
+
+function loadingOn(){
+  dom.loading.classList.add("active");
+}
+function loadingOff(){
+  dom.loading.classList.remove("active");
+}
+
+function calc(){
+  loadingOn();
+  dom.result.innerHTML = "";
+
+  setTimeout(() => {
+    const modelData = currentModel();
+    let price = modelData.price - 1500000;
+
+    price += storageAdjust(dom.storage.value);
+    price += colorAdjust(dom.color.value);
+    price += marketAdjust(dom.market.value);
+    price += batteryAdjust(modelData.key, dom.battery.value);
+
+    if(STATE.selected.pin === "thay") price -= 700000;
+    if(STATE.selected.body === "bung") price -= 1500000;
+
+    price = Math.max(price, 1500000);
+
+    const min = Math.round(price * 0.90);
+    const max = Math.round(price * 1.05);
+    const score = scoreCalc();
+
+    dom.result.innerHTML = `
+      <div class="result">
+        <div class="price">${money(min)} - ${money(max)}</div>
+        <div class="score">Điểm máy: ${score}/10</div>
+      </div>
+    `;
+
+    saveCustomer({
+      name: document.getElementById("name").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      model: modelData.label,
+      storage: dom.storage.value,
+      color: dom.color.value,
+      market: dom.market.value,
+      battery: dom.battery.value,
+      pin: STATE.selected.pin || "",
+      body: STATE.selected.body || "",
+      priceMin: min,
+      priceMax: max,
+      score
+    });
+
+    dom.contactSummary.innerHTML = buildContactSummary(min, max);
+    openContact();
+    loadingOff();
+  }, 700);
+}
+
+function resetForm(){
+  STATE.step = 0;
+  STATE.selected = {};
+  document.getElementById("name").value = "";
+  document.getElementById("phone").value = "";
+  dom.battery.value = 90;
+  updateBatteryUI();
+  populateModels();
+  loadStorage();
+  fillStaticSelects();
+  clearActiveButtons();
+  dom.result.innerHTML = "";
+  closeContact();
+  showStep(0);
+  updateSummary();
+}
+
+function openAdmin(){
+  dom.adminOverlay.classList.add("active");
+  dom.adminBox.classList.add("active");
+  document.body.style.overflow = "hidden";
+  restoreCustomersStats();
+}
+
+function closeAdmin(){
+  dom.adminOverlay.classList.remove("active");
+  dom.adminBox.classList.remove("active");
+  document.body.style.overflow = "";
+  dom.adminUser.value = "";
+  dom.adminPass.value = "";
+  dom.adminPanel.style.display = "none";
+}
+
+function loginAdmin(){
+  const user = dom.adminUser.value.trim();
+  const pass = dom.adminPass.value.trim();
+
+  if(user === "admin" && pass === "123456"){
+    dom.adminPanel.style.display = "block";
+    restoreCustomersStats();
+  }else{
+    alert("Sai tài khoản hoặc mật khẩu");
+  }
+}
+
+function csvEscape(value){
+  const s = String(value ?? "");
+  return `"${s.replaceAll('"','""')}"`;
+}
+
+function downloadData(){
+  const list = JSON.parse(localStorage.getItem("customers") || "[]");
+
+  const header = [
+    "Tên","SĐT","Model","Dung lượng","Màu","Mạng","Pin","Pin loại","Tình trạng","Giá thấp","Giá cao","Điểm","Thời gian"
+  ];
+
+  const rows = list.map(item => [
+    item.name, item.phone, item.model, item.storage, item.color, item.market, item.battery, item.pin, item.body, item.priceMin, item.priceMax, item.score, item.time
+  ].map(csvEscape).join(","));
+
+  const csv = [header.map(csvEscape).join(","), ...rows].join("\n");
+  const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "customers.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function clearData(){
+  if(confirm("Xoá toàn bộ dữ liệu khách?")){
+    localStorage.removeItem("customers");
+    restoreCustomersStats();
+    alert("Đã xoá dữ liệu");
+  }
+}
+
+function initFacebook(){
+  dom.fbName.textContent = FB_NAME;
+  dom.fbAvatar.src = `https://graph.facebook.com/${FB_ID}/picture?type=large`;
+  dom.fbAvatar.onerror = () => {
+    dom.fbAvatar.onerror = null;
+    dom.fbAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent("NL")}&background=007aff&color=fff`;
+  };
+}
+
+document.getElementById("model").addEventListener("change", () => {
+  loadStorage();
+  clearActiveButtons();
+  STATE.selected = {};
+  updateSummary();
+});
+
+dom.storage.addEventListener("change", updateSummary);
+dom.color.addEventListener("change", updateSummary);
+dom.market.addEventListener("change", updateSummary);
+
+dom.battery.addEventListener("input", () => {
+  updateBatteryUI();
+  updateSummary();
+});
+
+populateModels();
+fillStaticSelects();
+loadStorage();
+updateBatteryUI();
+initFacebook();
+updateSummary();
+showStep(0);
+</script>
+
+</body>
+</html>

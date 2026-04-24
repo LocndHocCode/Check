@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone</title>
+
+<style>
+body{font-family:Arial;background:#f5f6fa;margin:0}
+header{background:#ffd500;padding:15px;text-align:center;font-weight:bold}
+
+.container{max-width:520px;margin:auto;padding:15px}
+
+.card{background:#fff;padding:15px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+
+.step{display:none;animation:fade .3s}
+.step.active{display:block}
+
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.btn{
+padding:12px;border:1px solid #ddd;border-radius:10px;
+background:#fff;font-weight:bold;text-align:center;cursor:pointer
+}
+
+.btn.active{border:2px solid #ffd500;background:#fffbe6}
+
+.next{
+margin-top:15px;padding:12px;background:#ffd500;
+border:none;border-radius:10px;font-weight:bold;width:100%
+}
+
+input{
+width:100%;padding:12px;margin-top:10px;
+border-radius:8px;border:1px solid #ddd
+}
+
+.result{
+margin-top:15px;background:#fff;padding:15px;
+border-radius:12px;text-align:center
+}
+
+.price{font-size:26px;color:green;font-weight:bold}
+
+.loading{display:none;text-align:center;margin-top:10px}
+
+.contact{
+margin-top:20px;background:#fff;padding:15px;border-radius:12px
+}
+
+.link{
+display:block;padding:10px;margin-top:8px;border-radius:8px;
+text-align:center;font-weight:bold;color:#fff;text-decoration:none
+}
+
+.zalo{background:#0084ff}
+.fb{background:#1877f2}
+.call{background:#00a86b}
+
+.admin{
+position:fixed;bottom:20px;right:20px;
+background:#000;color:#fff;width:50px;height:50px;
+border-radius:50%;border:none
+}
+</style>
+</head>
+
+<body>
+
+<header>📱 THU MUA IPHONE</header>
+
+<div class="container">
+
+<div class="card">
+
+<!-- STEP 1 -->
+<div class="step active" id="step1">
+<h3>Chọn dòng máy</h3>
+<select id="model"></select>
+<button class="next" onclick="next(2)">Tiếp</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="step2">
+<h3>Dung lượng</h3>
+<div class="grid">
+<div class="btn" onclick="pick(this,'storage','64')">64GB</div>
+<div class="btn" onclick="pick(this,'storage','128')">128GB</div>
+<div class="btn" onclick="pick(this,'storage','256')">256GB</div>
+<div class="btn" onclick="pick(this,'storage','512')">512GB</div>
+</div>
+<button class="next" onclick="checkNext(3,'storage')">Tiếp</button>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="step3">
+<h3>Pin</h3>
+<div class="grid">
+<div class="btn" onclick="pick(this,'battery','95')">≥90%</div>
+<div class="btn" onclick="pick(this,'battery','85')">85-89%</div>
+<div class="btn" onclick="pick(this,'battery','80')">80-84%</div>
+<div class="btn" onclick="pick(this,'battery','70')"><80%</div>
+</div>
+<button class="next" onclick="checkNext(4,'battery')">Tiếp</button>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="step4">
+<h3>Tình trạng máy</h3>
+<div class="grid">
+<div class="btn" onclick="pick(this,'body','zin')">Zin</div>
+<div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+</div>
+<button class="next" onclick="checkNext(5,'body')">Tiếp</button>
+</div>
+
+<!-- STEP 5 -->
+<div class="step" id="step5">
+<h3>Lỗi</h3>
+<label><input type="checkbox" value="man"> Màn lỗi</label><br>
+<label><input type="checkbox" value="face"> Face lỗi</label><br>
+<label><input type="checkbox" value="cam"> Camera lỗi</label><br>
+<button class="next" onclick="next(6)">Tiếp</button>
+</div>
+
+<!-- STEP 6 -->
+<div class="step" id="step6">
+<h3>Thông tin khách</h3>
+
+<input id="name" placeholder="Tên khách">
+<input id="phone" placeholder="SĐT">
+<input id="expect" placeholder="Giá mong muốn (vd 15tr)">
+
+<button class="next" onclick="calc()">XEM GIÁ</button>
+<div class="loading" id="loading">⏳ Đang định giá...</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<div class="contact">
+<h3>Liên hệ</h3>
+
+<a class="link zalo" id="zaloBtn" target="_blank">
+💬 Gửi qua Zalo
+</a>
+
+<a class="link fb" href="#" target="_blank">
+📘 Facebook
+</a>
+
+<a class="link call" href="tel:0827703579">
+📞 0827 703 579
+</a>
+
+<iframe src="https://www.google.com/maps?q=10.6083,106.6725&output=embed"
+width="100%" height="200" style="border:0;border-radius:10px;margin-top:10px"></iframe>
+
+</div>
+
+</div>
+
+<button class="admin" onclick="admin()">⚙️</button>
+
+<script>
+
+// ===== MODEL FULL =====
+const MODELS=[
+"iphone x","iphone xr","iphone xs","iphone xs max",
+"iphone 11","iphone 11 pro","iphone 11 pro max",
+"iphone 12 mini","iphone 12","iphone 12 pro","iphone 12 pro max",
+"iphone 13 mini","iphone 13","iphone 13 pro","iphone 13 pro max",
+"iphone 14","iphone 14 plus","iphone 14 pro","iphone 14 pro max",
+"iphone 15","iphone 15 plus","iphone 15 pro","iphone 15 pro max"
+];
+
+// ===== BASE =====
+const BASE={
+"iphone x":2500000,"iphone xr":3500000,"iphone xs":4000000,"iphone xs max":4500000,
+"iphone 11":5000000,"iphone 11 pro":6000000,"iphone 11 pro max":7000000,
+"iphone 12 mini":7000000,"iphone 12":8000000,"iphone 12 pro":10000000,"iphone 12 pro max":12000000,
+"iphone 13 mini":9000000,"iphone 13":10000000,"iphone 13 pro":13000000,"iphone 13 pro max":15000000,
+"iphone 14":12000000,"iphone 14 plus":13000000,"iphone 14 pro":14000000,"iphone 14 pro max":15000000,
+"iphone 15":14000000,"iphone 15 plus":15000000,"iphone 15 pro":16000000,"iphone 15 pro max":17000000
+};
+
+let m=document.getElementById("model");
+MODELS.forEach(x=>{
+let o=document.createElement("option");
+o.value=x;o.textContent=x.toUpperCase();
+m.appendChild(o);
+});
+
+let selected={};
+
+function next(n){
+document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+document.getElementById("step"+n).classList.add("active");
+}
+
+function checkNext(n,key){
+if(!selected[key]){alert("Chọn trước");return;}
+next(n);
+}
+
+function pick(el,key,val){
+let box=el.parentElement;
+box.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+selected[key]=val;
+}
+
+function scale(m){
+if(m.includes("pro max")) return 1.2;
+if(m.includes("pro")) return 1.1;
+if(m.includes("plus")) return 1.05;
+if(m.includes("mini")) return 0.95;
+return 1;
+}
+
+function parseMoney(v){
+v=v.toLowerCase();
+if(v.includes("tr")) return parseFloat(v)*1000000;
+return parseInt(v.replace(/\D/g,''))||0;
+}
+
+function calc(){
+
+document.getElementById("loading").style.display="block";
+
+setTimeout(()=>{
+
+let model=m.value;
+let base=BASE[model];
+
+if(!base){alert("Thiếu giá");return;}
+
+let price=base*0.75*scale(model);
+
+if(selected.storage==="256") price+=1000000;
+if(selected.storage==="512") price+=2000000;
+
+if(selected.body==="bung") price-=1000000;
+
+let battery=parseInt(selected.battery||0);
+if(battery<85) price-=500000;
+
+document.querySelectorAll("#step5 input:checked").forEach(e=>{
+if(e.value==="man") price-=2000000;
+if(e.value==="face") price-=1500000;
+if(e.value==="cam") price-=1000000;
+});
+
+if(price<base*0.4) price=base*0.4;
+
+let expect=parseMoney(document.getElementById("expect").value);
+
+let final=price;
+if(expect){
+if(expect>price) final=price-300000;
+else final=expect+300000;
+}
+
+document.getElementById("loading").style.display="none";
+
+document.getElementById("result").innerHTML=
+`<div class="result"><div class="price">${Math.round(final).toLocaleString()}đ</div></div>`;
+
+// ===== ZALO FULL =====
+let msg=`
+📱 BÁN IPHONE
+
+👤 ${document.getElementById("name").value}
+📞 ${document.getElementById("phone").value}
+
+📲 ${model}
+💾 ${selected.storage}
+🔋 ${selected.battery}
+📦 ${selected.body}
+
+💰 ${Math.round(final).toLocaleString()}đ
+`;
+
+msg=encodeURIComponent(msg);
+
+document.getElementById("zaloBtn").href=
+"https://zalo.me/0827703579?text="+msg;
+
+// save
+let data=JSON.parse(localStorage.getItem("data")||"[]");
+data.push({model,price:final});
+localStorage.setItem("data",JSON.stringify(data));
+
+},700);
+}
+
+function admin(){
+let p=prompt("pass");
+if(p!=="123456"){alert("Sai");return;}
+let d=JSON.parse(localStorage.getItem("data")||"[]");
+let csv="model,price\n";
+d.forEach(x=>csv+=`${x.model},${x.price}\n`);
+let a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([csv]));
+a.download="data.csv";
+a.click();
+}
+
+</script>
+
+</body>
+</html>

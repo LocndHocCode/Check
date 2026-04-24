@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thu mua iPhone PRO</title>
+
+<style>
+body{font-family:-apple-system;background:#f2f2f7;margin:0}
+
+/* HEADER */
+header{position:sticky;top:0;background:#fff;padding:14px;text-align:center;font-weight:600}
+
+/* PROGRESS */
+.progress{height:4px;background:#ddd}
+.progress-bar{
+height:100%;
+width:0;
+background:linear-gradient(90deg,#007aff,#34c759,#007aff);
+background-size:200% 100%;
+animation:move 2s linear infinite;
+transition:width .3s;
+}
+@keyframes move{0%{background-position:0%}100%{background-position:200%}}
+
+/* LAYOUT */
+.container{max-width:500px;margin:auto;padding:15px}
+.card{
+background:#fff;border-radius:20px;padding:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+animation:fadeUp .4s;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1}}
+
+.step{display:none}.step.active{display:block}
+
+input,select{
+width:100%;padding:14px;border-radius:14px;border:none;
+background:#f2f2f7;margin-top:10px
+}
+
+/* BUTTON */
+.btn,.next{
+padding:14px;border-radius:14px;margin-top:10px;text-align:center;font-weight:600;
+transition:.2s
+}
+.btn{background:#eee}
+.btn.active{background:#007aff;color:#fff}
+.next{background:#007aff;color:#fff}
+.btn:active,.next:active{transform:scale(.96)}
+
+/* RESULT */
+.result{
+background:#fff;padding:15px;margin-top:15px;border-radius:18px;
+animation:pop .3s
+}
+.price{font-size:26px;text-align:center;color:#34c759;font-weight:700}
+@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1)}}
+
+/* CONTACT */
+a.btn-link{
+display:block;padding:12px;border-radius:12px;text-align:center;
+text-decoration:none;color:#fff;margin-top:8px;transition:.2s
+}
+a.btn-link:hover{transform:translateY(-2px)}
+
+</style>
+</head>
+
+<body>
+
+<header>Thu mua iPhone</header>
+<div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+
+<div class="container">
+<div class="card">
+
+<!-- STEP 1 -->
+<div class="step active">
+<select id="model"></select>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+<select id="storage"></select>
+
+<select id="color">
+<option>Black</option>
+<option>White</option>
+<option>Purple</option>
+<option>Gold</option>
+<option>Blue</option>
+</select>
+
+<select id="market">
+<option value="VNA">VN/A</option>
+<option value="LL">LL/A</option>
+<option value="ZP">ZP/A</option>
+<option value="CH">CH/A</option>
+</select>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<label>🔋 Pin <span id="pinIcon">🔋</span></label>
+<input type="range" id="battery" min="70" max="100" value="90">
+<div><span id="batteryValue">90</span>%</div>
+
+<div class="btn" onclick="pick(this,'pin','zin')">Pin zin</div>
+<div class="btn" onclick="pick(this,'pin','thay')">Pin thay</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+<div class="btn" onclick="pick(this,'body','zin')">Chưa bung</div>
+<div class="btn" onclick="pick(this,'body','bung')">Đã bung</div>
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="next()">Tiếp</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+<input id="name" placeholder="Tên khách">
+<input id="phone" placeholder="SĐT">
+
+<div class="btn" onclick="prev()">← Quay lại</div>
+<div class="next" onclick="calc()">Xem giá</div>
+</div>
+
+</div>
+
+<div id="result"></div>
+
+<!-- CONTACT -->
+<div id="contactBox" style="display:none">
+<div class="result">
+<div style="font-weight:600;text-align:center">Liên hệ chốt giá</div>
+
+<a id="zaloLink" class="btn-link" style="background:#007aff">Zalo</a>
+<a id="fbLink" class="btn-link" style="background:#1877f2">Facebook</a>
+<a id="mapLink" class="btn-link" style="background:#34c759">Google Map</a>
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// CONFIG CONTACT
+const ADMIN={
+zalo:"https://zalo.me/0900000000",
+fb:"https://facebook.com/yourpage",
+map:"https://maps.google.com/?q=Can+Giuoc"
+};
+
+// MODEL FULL
+const MODELS=[
+"iphone x","iphone xr","iphone xs","iphone xs max",
+"iphone 11","iphone 11 pro","iphone 11 pro max",
+"iphone 12 mini","iphone 12","iphone 12 pro","iphone 12 pro max",
+"iphone 13 mini","iphone 13","iphone 13 pro","iphone 13 pro max",
+"iphone 14","iphone 14 plus","iphone 14 pro","iphone 14 pro max",
+"iphone 15","iphone 15 plus","iphone 15 pro","iphone 15 pro max",
+"iphone 16","iphone 16 plus","iphone 16 pro","iphone 16 pro max",
+"iphone 17","iphone 17 plus","iphone 17 pro","iphone 17 pro max"
+];
+MODELS.forEach(x=>model.innerHTML+=`<option>${x}</option>`);
+
+// STORAGE
+function getStorage(m){
+if(m.includes("pro")) return [128,256,512,1024];
+return [64,128,256];
+}
+function loadStorage(){
+storage.innerHTML="";
+getStorage(model.value).forEach(x=>storage.innerHTML+=`<option>${x}</option>`);
+}
+
+// STEP
+let step=0,steps=document.querySelectorAll(".step");
+function show(){
+steps.forEach(s=>s.classList.remove("active"));
+steps[step].classList.add("active");
+progressBar.style.width=(step/(steps.length-1)*100)+"%";
+}
+function next(){if(step<steps.length-1){step++;show()}}
+function prev(){if(step>0){step--;show()}}
+
+// PICK
+let selected={};
+function pick(el,k,v){
+selected[k]=v;
+el.parentElement.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+el.classList.add("active");
+}
+
+// PIN
+battery.oninput=()=>{
+batteryValue.innerText=battery.value;
+pinIcon.innerText=battery.value<85?"🪫":"🔋";
+}
+
+// PRICE
+const marketPrice={"iphone x":5000000,"iphone 11":8000000,"iphone 13":12000000,"iphone 15":17000000,"iphone 17":23000000};
+
+function calc(){
+
+result.innerHTML=`<div class="result">⏳ Đang định giá...</div>`;
+
+setTimeout(()=>{
+
+let base=marketPrice[model.value]||10000000;
+let price=base-1500000;
+
+if(battery.value<85)price-=500000;
+if(selected.pin=="thay")price-=700000;
+if(selected.body=="bung")price-=1500000;
+
+let min=Math.round(price*0.9);
+let max=Math.round(price*1.03);
+
+result.innerHTML=`<div class="result">
+<div class="price">${min.toLocaleString()} - ${max.toLocaleString()}đ</div>
+</div>`;
+
+zaloLink.href=ADMIN.zalo;
+fbLink.href=ADMIN.fb;
+mapLink.href=ADMIN.map;
+
+contactBox.style.display="block";
+
+},700);
+}
+
+// INIT
+model.onchange=loadStorage;
+loadStorage();
+show();
+
+</script>
+
+</body>
+</html>
